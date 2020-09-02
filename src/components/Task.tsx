@@ -36,7 +36,11 @@ const styles = {
     }
 };
 
+
+
 export const Task = ({ task } : _TProps) => {
+
+
 
     const dispatch = useDispatch();
 

@@ -3,9 +3,9 @@ import { listKeys } from "../model/index";
 import { Task } from "./Task";
 import {connect, ConnectedProps, useDispatch} from "react-redux";
 import { IState } from "../redux-stuff/types";
-import { addTaskAction } from "../redux-stuff/index";
+import {addTaskAction, updateSecondsAction} from "../redux-stuff/index";
 import { ITask } from "../model/types";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 
 const styles = {
@@ -46,6 +46,14 @@ type _TProps = ConnectedProps<{ tasks: ITask[] }>;
 const RawFlow = ({ tasks }: _TProps) => {
 
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        const timer = setInterval(
+            () => dispatch(updateSecondsAction()),
+            1000
+        );
+        return () => clearInterval(timer);
+    });
 
     const addTaskOnClick = () => {
         const label = window.prompt('Напишите описание задачи');

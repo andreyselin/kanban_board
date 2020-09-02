@@ -1,12 +1,19 @@
-import { ITask, TListKey } from "../model/types";
-import {IActionAddTask, IActionMoveTask, IState} from "./types";
+import { ITask } from "../model/types";
+import {IActionAddTask, IActionMoveTask, IActionUpdateSeconds, IState} from "./types";
 import { listKeys } from '../model'
 
 
+    /////////////////
+    //             //
+    //   Actions   //
+    //             //
+    /////////////////
+
 
 const actionTypes = {
-    addTask:  'actionTypes.addTask',
-    moveTask: 'actionTypes.moveTask',
+    addTask:    'actionTypes.addTask',
+    moveTask:   'actionTypes.moveTask',
+    updateDate: 'actionTypes.updateDate',
 };
 
 export const addTaskAction = ({ label }: { label: string}): IActionAddTask => ({
@@ -26,6 +33,10 @@ export const moveTaskAction = ({ id }: { id: string }): IActionMoveTask => ({
     id
 });
 
+export const updateSecondsAction = (): IActionUpdateSeconds => ({
+    type: actionTypes.updateDate,
+});
+
 
 
     //////////////////////////
@@ -35,8 +46,10 @@ export const moveTaskAction = ({ id }: { id: string }): IActionMoveTask => ({
     //////////////////////////
 
 
+const getNow = () => Math.floor(Date.now() / 1000);
 
 const defaultState: IState = {
+    date: getNow(),
     tasks: []
 };
 
@@ -44,6 +57,7 @@ export const rootReducer = (state = defaultState, action: any) => {
     switch (action.type) {
         case actionTypes.addTask:
             return {
+                ...state,
                 tasks: [
                     ...state.tasks,
                     (action as IActionAddTask).newTask
@@ -52,6 +66,7 @@ export const rootReducer = (state = defaultState, action: any) => {
 
         case actionTypes.moveTask:
             return {
+                ...state,
                 tasks: state.tasks.map((task: ITask) =>
                     task.id === (action as IActionMoveTask).id
                         ? {
@@ -62,6 +77,12 @@ export const rootReducer = (state = defaultState, action: any) => {
                         }
                         : task
                 )
+            };
+
+        case actionTypes.updateDate:
+            return {
+                ...state,
+                date: getNow()
             };
 
         default:
