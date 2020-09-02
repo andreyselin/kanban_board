@@ -14,17 +14,21 @@ const nextListLabels: {
 };
 
 const styles = {
-    label: {
-        marginBottom: '4px',
-    },
     timeInProgress: {},
     task: {
         marginBottom: '5px',
-        padding: '5px',
+        padding: '5px 5px 0',
         background: '#f5f5f5',
         border: '1px solid silver',
-        borderRadius: '5px'
+        borderRadius: '5px',
+        display: 'flex',
+        flexDirection: 'column' as 'column',
+        alignItems:    'center'
+    },
+    taskSection: {
+        marginBottom: '5px',
     }
+
 };
 
 const mapState = (state: IState) => ({
@@ -48,18 +52,18 @@ const _RawTask = ({ task, date } : _TProps) => {
     };
 
     return (<div style={ styles.task }>
-        <div style={ styles.label }>{ task.label }</div>
+        <div style={ styles.taskSection }>{ task.label }</div>
 
         { task.listKey === listKeys.wip && (
-            <div style={ styles.timeInProgress }><Time start= { (task.movedToWipAt || 0) } end={ date } /></div>
+            <div style={ styles.taskSection }><Time start= { (task.movedToWipAt || 0) } end={ date } /></div>
         )}
 
         { task.listKey === listKeys.done && (
-            <div style={ styles.timeInProgress }><Time start= { (task.movedToWipAt || 0) } end={ (task.movedToDoneAt as number) } /></div>
+            <div style={ styles.taskSection }><Time start= { (task.movedToWipAt || 0) } end={ (task.movedToDoneAt as number) } /></div>
         )}
 
         { task.listKey !== listKeys.done && (
-            <button onClick={ () => moveForward() }>{
+            <button style={styles.taskSection} onClick={ () => moveForward() }>{
                 nextListLabels[ task.listKey as TNextListKey ]
             }</button>
         )}
