@@ -1,10 +1,11 @@
 import * as React from "react";
-import { listKeys } from "../../model";
-import { Task } from "../Task";
-import { connect, ConnectedProps } from "react-redux";
-import { IState } from "../../redux-stuff/types";
-import { addTaskAction } from "../../redux-stuff";
-import { ITask } from "../../model/types";
+import { listKeys } from "../model/index";
+import { Task } from "./Task";
+import {connect, ConnectedProps, useDispatch} from "react-redux";
+import { IState } from "../redux-stuff/types";
+import { addTaskAction } from "../redux-stuff/index";
+import { ITask } from "../model/types";
+import {useState} from "react";
 
 
 const styles = {
@@ -44,20 +45,22 @@ type _TProps = ConnectedProps<{ tasks: ITask[] }>;
 
 const RawFlow = ({ tasks }: _TProps) => {
 
+    const dispatch = useDispatch();
+
     const addTaskOnClick = () => {
         const label = window.prompt('Напишите описание задачи');
-        label && addTaskAction({ label });
+        label && dispatch(addTaskAction({ label }));
     };
 
     return (
         <div style={ styles.flow }>
             { Object.keys(listKeys).map(listKey => (
-                <div style={ styles.column }>
+                <div key={ listKey } style={ styles.column }>
                     <div style={ styles.header }>{ listKey }</div>
                     {
-                        (tasks as ITask[])
+                        (tasks && tasks as ITask[])
                             .filter(task => task.listKey === listKey)
-                            .map(task => ( <Task task={ task } /> ))
+                            .map(task => ( <Task key={task.id} task={ task } /> ))
                     }{
                         listKey === listKeys.todo && (
                             <button style={ styles.item } onClick={ addTaskOnClick }>Новая задача</button>

@@ -22,7 +22,7 @@ export const addTaskAction = ({ label }: { label: string}): IActionAddTask => ({
 });
 
 export const moveTaskAction = ({ id }: { id: string }): IActionMoveTask => ({
-    type: actionTypes.addTask,
+    type: actionTypes.moveTask,
     id
 });
 
@@ -52,7 +52,6 @@ export const rootReducer = (state = defaultState, action: any) => {
 
         case actionTypes.moveTask:
             return {
-                ...state,
                 tasks: state.tasks.map((task: ITask) =>
                     task.id === (action as IActionMoveTask).id
                         ? {
@@ -61,7 +60,8 @@ export const rootReducer = (state = defaultState, action: any) => {
                                 ? listKeys.wip
                                 : listKeys.done
                         }
-                        : task)
+                        : task
+                )
             };
 
         default:

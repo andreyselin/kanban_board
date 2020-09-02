@@ -1,8 +1,8 @@
 import * as React from "react";
-// @ts-ignore
-import styles from './styles.css';
-import {ITask, TListKey, TNextListKey} from "../../model/types";
-import {listKeys} from "../../model";
+import {ITask, TListKey, TNextListKey} from "../model/types";
+import {listKeys} from "../model/index";
+import {useDispatch} from "react-redux";
+import {moveTaskAction} from "../redux-stuff/index";
 
 type _TProps = {
     task: ITask
@@ -22,17 +22,33 @@ const nextListLabels: {
     [ listKeys.wip  ]: 'Завершить'
 };
 
+const styles = {
+    label: {
+        marginBottom: '4px',
+    },
+    timeInProgress: {},
+    task: {
+        marginBottom: '5px',
+        padding: '5px',
+        background: '#f5f5f5',
+        border: '1px solid silver',
+        borderRadius: '5px'
+    }
+};
+
 export const Task = ({ task } : _TProps) => {
 
+    const dispatch = useDispatch();
+
     const moveToList = (targetListKey: TListKey) => {
-        console.log({ targetListKey });
+        dispatch(moveTaskAction({ id: task.id }));
     };
 
-    return (<div className={ styles.task }>
-        <div className={ styles.labels }>{ task.label }</div>
+    return (<div style={ styles.task }>
+        <div style={ styles.label }>{ task.label }</div>
 
         { task.listKey === listKeys.wip && (
-            <div className={ styles.timeInProgress }>{ task.movedToWipAt }</div>
+            <div style={ styles.timeInProgress }>{ task.movedToWipAt }</div>
         )}
 
         { task.listKey !== listKeys.done && (
