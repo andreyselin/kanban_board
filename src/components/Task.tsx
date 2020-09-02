@@ -1,19 +1,10 @@
 import * as React from "react";
 import {ITask, TListKey, TNextListKey} from "../model/types";
-import {listKeys} from "../model/index";
-import {useDispatch} from "react-redux";
-import {moveTaskAction} from "../redux-stuff/index";
-
-type _TProps = {
-    task: ITask
-};
-
-const nextListKeys: {
-    [ key in TNextListKey ]: TListKey
-} = {
-    [ listKeys.todo ]: listKeys.wip,
-    [ listKeys.wip  ]: listKeys.done,
-};
+import {listKeys} from "../model";
+import {connect, ConnectedProps, useDispatch} from "react-redux";
+import {moveTaskAction, TRootReducer} from "../redux-stuff";
+import {IState} from "../redux-stuff/types";
+import {Time} from "./Time";
 
 const nextListLabels: {
     [ key in TNextListKey ]: string
@@ -36,15 +27,23 @@ const styles = {
     }
 };
 
+const mapState = (state: IState) => ({
+    date: state.date
+});
+const mapDispatch = {};
 
+const connector = connect(mapState, mapDispatch);
+type _TPropsFromRedux = ConnectedProps<typeof connector>
 
-export const Task = ({ task } : _TProps) => {
+interface _TProps extends _TPropsFromRedux {
+    task: ITask
+}
 
-
+const _RawTask = ({ task, date } : _TProps) => {
 
     const dispatch = useDispatch();
 
-    const moveToList = (targetListKey: TListKey) => {
+    const moveForward = () => {
         dispatch(moveTaskAction({ id: task.id }));
     };
 
@@ -52,14 +51,20 @@ export const Task = ({ task } : _TProps) => {
         <div style={ styles.label }>{ task.label }</div>
 
         { task.listKey === listKeys.wip && (
-            <div style={ styles.timeInProgress }>{ task.movedToWipAt }</div>
+            <div style={ styles.timeInProgress }><Time start= { (task.movedToWipAt || 0) } end={ date } /></div>
+        )}
+
+        { task.listKey === listKeys.done && (
+            <div style={ styles.timeInProgress }><Time start= { (task.movedToWipAt || 0) } end={ (task.movedToDoneAt as number) } /></div>
         )}
 
         { task.listKey !== listKeys.done && (
-            <button onClick={ () => moveToList(nextListKeys[ task.listKey as TNextListKey ]) }>{
+            <button onClick={ () => moveForward() }>{
                 nextListLabels[ task.listKey as TNextListKey ]
             }</button>
         )}
 
     </div>)
 };
+
+export const Task = connector(_RawTask);

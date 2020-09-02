@@ -9,8 +9,8 @@ export interface ITask {
     listKey       : TListKey;
     label         : string;
     createdAt     : Date;
-    movedToWipAt  : null | Date;
-    movedToDoneAt : null | Date;
+    movedToWipAt  : null | number;
+    movedToDoneAt : null | number;
 }
 
 export type TNextListKey = Exclude<TListKey, 'done'>

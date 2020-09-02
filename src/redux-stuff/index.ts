@@ -48,10 +48,14 @@ export const updateSecondsAction = (): IActionUpdateSeconds => ({
 
 const getNow = () => Math.floor(Date.now() / 1000);
 
-const defaultState: IState = {
+const defaultState
+    : IState
+    = {
     date: getNow(),
     tasks: []
 };
+
+export type TRootReducer = typeof defaultState;
 
 export const rootReducer = (state = defaultState, action: any) => {
     switch (action.type) {
@@ -73,7 +77,9 @@ export const rootReducer = (state = defaultState, action: any) => {
                             ...task,
                             listKey: task.listKey === listKeys.todo
                                 ? listKeys.wip
-                                : listKeys.done
+                                : listKeys.done,
+                            movedToWipAt:  task.listKey === listKeys.todo ? getNow() : task.movedToWipAt,
+                            movedToDoneAt: task.listKey === listKeys.wip  ? getNow() : task.movedToDoneAt,
                         }
                         : task
                 )
